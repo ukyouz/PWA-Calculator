@@ -2,7 +2,7 @@ $btn-bg: #fff
 $btn-bg-hover: darken($btn-bg, 5%)
 $btn-border-color: #839aa2
 $btn-border-radius: 10px
-$btn-depth: 4px
+$btn-depth: 5px
 $style-list: primary, secondary, warning, white
 $color-list: #5d7780,   #bcc9ce, #ffb06d,  #fff
 
@@ -26,7 +26,7 @@ $color-list: #5d7780,   #bcc9ce, #ffb06d,  #fff
 		background: darken($btn-border-color, 80%)
 		border-radius: $btn-border-radius $btn-border-radius $btn-border-radius-bottom $btn-border-radius-bottom
 		z-index: -1
-	&:active, &.is-disabled
+	&:active, &.is-disabled, &.is-active
 		border-bottom-width: 1px
 		margin-top: $btn-depth - 1px
 		&:after
@@ -36,8 +36,8 @@ $color-list: #5d7780,   #bcc9ce, #ffb06d,  #fff
 	// background: $btn-bg
 	// border-color: $btn-border-color
 	// box-shadow: 0 1px 0 0px darken($btn-border-color, 80%)
-	&:hover
-		background: $btn-bg-hover
+	// &:hover
+		// background: $btn-bg-hover
 	@for $i from 1 through length($style-list)
 		&.is-#{nth($style-list, $i)}
 			$color: nth($color-list, $i)
@@ -49,8 +49,8 @@ $color-list: #5d7780,   #bcc9ce, #ffb06d,  #fff
 				color: darken($color, 60%)
 			@if ($color == #FFF)
 				color: #333
-			&:hover
-				background: darken($color, 5%)
+			&.is-active
+				background: darken($color, 10%)
 			
 	// &.is-warning
 	
