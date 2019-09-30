@@ -1,0 +1,158 @@
+@import 'reset.sass'
+@import 'base.sass'
+@import url('https://fonts.googleapis.com/css?family=PT+Sans&display=swap');
+
+$grid-col-gap: 10px
+@mixin flex-center
+	display: flex
+	align-items: center
+	justify-content: center
+
+body
+	font-family: "PT Sans", sans-serif
+	background: #e5eaec
+
+.panel
+	margin-bottom: $grid-col-gap
+	padding-right: $grid-col-gap
+	padding-left: $grid-col-gap
+
+.navbar
+	$color: #2e2e44
+	background: #a0a0b9
+	color: $color
+	margin-right: -$grid-col-gap
+	margin-left: -$grid-col-gap
+	padding: $grid-col-gap $grid-col-gap
+	font-size: .85em
+	height: calc(6vh - #{3*$grid-col-gap})
+	display: flex
+	align-items: center
+	justify-content: space-between
+	position: relative
+	.hamburger
+		position: absolute
+		right: 0
+		top: 0
+		bottom: 0
+		width: 4*$grid-col-gap
+		// outline: 1px solid blue
+		&__bar
+			width: 2*$grid-col-gap
+			height: 1px
+			background: $color
+			position: absolute
+			top: 50%
+			left: 50%
+			margin-left: -1*$grid-col-gap
+			&--first
+				margin-top: -5px
+			&--third
+				margin-top: 5px
+	&__menu
+		// height: calc(6vh - #{3*$grid-col-gap})
+		&-item
+			display: inline-block
+			a
+				// color: 
+	.site-title
+		// display: block
+		// float: right
+		// color: #aaa
+
+.list
+	font-family: "Electronic Highway Sign", "Fira Code", menlo, consolas, monospace
+	height: calc(32vh - #{$grid-col-gap})
+	color: #444965
+	background: #7ca08c
+	border-radius: 10px
+	overflow: hidden
+	display: flex
+	flex-direction: column
+    justify-content: space-around
+	.title
+		font-size: 12px
+	.content
+		font-size: 1.2em
+	&__item
+		background: #7ca08c
+		cursor: pointer
+		transition: background-color .2s
+		// padding-left: $grid-col-gap
+		// padding-right: 0
+		.title
+			margin-right: $grid-col-gap
+		display: flex
+		// flex-grow: 1
+		height: 25%
+		align-items: center
+		.bit-32
+			// font-size: 12px
+			// .bit-offset
+			// 	display: block
+			// 	opacity: 0.4
+			// 	white-space: pre
+		&.is-active
+			background: #c9e7d6
+.pills
+	.pill
+		height: calc(8vh - #{$grid-col-gap})
+		box-sizing: border-box
+		margin-right: $grid-col-gap
+		user-select: none
+		min-width: calc(8vh - #{$grid-col-gap})
+		+flex-center
+		&:last-child
+			margin-right: 0
+.pad
+	display: grid
+	box-sizing: border-box
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr
+	grid-column-gap: $grid-col-gap
+	grid-row-gap: $grid-col-gap
+	height: calc(54vh - #{$grid-col-gap})
+	&__btn
+		user-select: none
+		font-weight: bolder
+		font-size: 1.25em
+		// height: 15vw
+		// max-height: 2.5rem
+		// border: 1px solid gray
+		&.btn-sm
+			font-size: 1em
+		+flex-center
+		&.is-disabled
+			background: #ececec
+			color: #9c9c9c
+		.symbol
+			&-plus
+				transform: translate(2px, -4px) scale(0.8)
+				width: 9px
+			&-slash
+				transform: rotate(45deg) scale(0.85, 1.1)
+			&-minus
+				transform: translate(-1px, 5px) scale(1.2, 0.8)
+				width: 9px
+			// display: inline
+
+.pad-icon
+	grid-template-columns: 1fr 1fr 1fr
+	grid-row-gap: 1px
+	grid-column-gap: 1px
+	display: grid
+	padding: 0 3px
+	&__bit
+		font-size: 12px
+		font-family: monospace
+		font-weight: bolder
+		transform: scale(0.7)
+		width: 4px
+		height: 6px
+		line-height: 6px
+	&__pad
+		background: #000
+		width: 4px
+		height: 4px
+		border-radius: 100%
+		&.is-white
+			background: transparent
