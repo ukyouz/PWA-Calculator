@@ -283,17 +283,6 @@ const btn_modeOp_clicked = (_this) => {
 	gEMode = OPMODE.OP;
 	_this.classList.add('is-active')
 }
-const btn_PLUS_MINUS_clicked = (_this) => {
-	btn_modeOp_clicked(_this);
-	// debug('+-');
-}
-const btn_MUL_DIV_clicked = (_this) => {
-	btn_modeOp_clicked(_this);
-	// debug('*/');
-}
-const btn_BitOP_clicked = (_this) => {
-	btn_modeOp_clicked(_this);
-}
 const btn_NUM_clicked = (_this, key) => {
 	if (gEMode == OPMODE.NUM) {
 		gStrInput += key;
@@ -341,14 +330,14 @@ num_pad.addEventListener('click', e => {
 		case "shl": operate_immediately(val => val << 1); break;
 		case "~":   operate_immediately(val => ~val); break;
 		case "ac": btn_AC_clicked(); break;
-		case "+": gECodeActive = OPCODE.ADD; btn_PLUS_MINUS_clicked(_this); break;
-		case "-": gECodeActive = OPCODE.SUB; btn_PLUS_MINUS_clicked(_this); break;
-		case "*": gECodeActive = OPCODE.MUL; btn_MUL_DIV_clicked(_this); break;
-		case "/": gECodeActive = OPCODE.DIV; btn_MUL_DIV_clicked(_this); break;
-		case "&": gECodeActive = OPCODE.AND; btn_BitOP_clicked(_this); break;
-		case "|": gECodeActive = OPCODE.OR; btn_BitOP_clicked(_this); break;
-		case "^": gECodeActive = OPCODE.XOR; btn_BitOP_clicked(_this); break;
-		case "%": gECodeActive = OPCODE.MOD; btn_BitOP_clicked(_this); break;
+		case "+": gECodeActive = OPCODE.ADD; btn_modeOp_clicked(_this); break;
+		case "-": gECodeActive = OPCODE.SUB; btn_modeOp_clicked(_this); break;
+		case "*": gECodeActive = OPCODE.MUL; btn_modeOp_clicked(_this); break;
+		case "/": gECodeActive = OPCODE.DIV; btn_modeOp_clicked(_this); break;
+		case "&": gECodeActive = OPCODE.AND; btn_modeOp_clicked(_this); break;
+		case "|": gECodeActive = OPCODE.OR;  btn_modeOp_clicked(_this); break;
+		case "^": gECodeActive = OPCODE.XOR; btn_modeOp_clicked(_this); break;
+		case "%": gECodeActive = OPCODE.MOD; btn_modeOp_clicked(_this); break;
 		case "=": gECodeActive = OPCODE.EQUAL; btn_EQUAL_clicked(_this); break;
 		// input number
 		default: btn_NUM_clicked(_this, key); break;
