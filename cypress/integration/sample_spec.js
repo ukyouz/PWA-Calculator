@@ -24,17 +24,17 @@ describe('My First Test', function () {
 		cy.visit('/');
 	});
 	describe('Calculation Check', function () {
-		// check_display([1, '+', 1, '='], 2);
-		// check_display([1, '+', 2, '*', 3, '='], 7);
-		// check_display([1, '+', 2, '*', 3, '/', 3, '='], 3);
-		// check_display([1, '+', 2, '*', 3, '/', 3, '-', 4, '='], -1);
-		// check_display([1, '+', 1, '=', '=', '='], 4);
-		// check_display([1, '+', 1, '-', 1, '=', '='], 0);
-		// check_display([1, '+', 1, '*', 2, '=', '='], 6);
-		// check_display([1,0,'+',7, '*', 2, '=', '-', 1, '='], 23);
-		// check_display([1,0,'+',7, '*',1,2,'=', '+', 6, '='],100);
-		// check_display([1, '+', 1, '*', 2, 'ac', 'ac', 1], 1);
-		// check_display([1, '+', 1, '*', 2, 'ac', '+', 1, '='], 3);
+		check_display([1, '+', 1, '='], 2);
+		check_display([1, '+', 2, '*', 3, '='], 7);
+		check_display([1, '+', 2, '*', 3, '/', 3, '='], 3);
+		check_display([1, '+', 2, '*', 3, '/', 3, '-', 4, '='], -1);
+		check_display([1, '+', 1, '=', '=', '='], 4);
+		check_display([1, '+', 1, '-', 1, '=', '='], 0);
+		check_display([1, '+', 1, '*', 2, '=', '='], 6);
+		check_display([1,0,'+',7, '*', 2, '=', '-', 1, '='], 23);
+		check_display([1,0,'+',7, '*',1,2,'=', '+', 6, '='],100);
+		check_display([1, '+', 1, '*', 2, 'ac', 'ac', 1], 1);
+		check_display([1, '+', 1, '*', 2, 'ac', '+', 1, '='], 3);
 
 		check_display([5, '*', 2, '%', 7, '='], 3);
 		check_display([5, '%', 3, '*', 2, '='], 4);
@@ -45,12 +45,12 @@ describe('My First Test', function () {
 		check_display([5, '+', 1, '|', 1, '='], 7);
 		check_display([5, '|', 4, '+', 2, '='], 7);
 	})
-	// describe('Display Check', function () {
-	// 	check_display([1, '+', 2, '+'], 3);
-	// 	check_display([1, '+', 2, '*'], 2);
-	// 	check_display([1, '+', 2, '*', 3, '+'], 7);
-	// 	check_display([1, '+', 2, '*', 3, '*'], 6);
-	// 	check_display([1, '-', 2, '*', 3, '+'], -5);
-	// 	check_display([1, '-', 2, '*', 3, '*'], 6);
-	// })
+	describe('Display Check', function () {
+		check_display([1, '+', 2, '+'], 3);
+		check_display([1, '+', 2, '*'], 2);
+		check_display([1, '+', 2, '*', 3, '+'], 7);
+		check_display([1, '+', 2, '*', 3, '*'], 6);
+		check_display([1, '-', 2, '*', 3, '+'], -5);
+		check_display([1, '-', 2, '*', 3, '*'], 6);
+	})
 });

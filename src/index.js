@@ -144,101 +144,79 @@ const ac_reset = () => {
 const calculation = (opcode, op_next, preview) => {
 	preview = preview || false;
 	var val = getValueAtBase(gStrInput, gEBase);
-	// var reg_a = 0, reg_b = 0;
 	debug('cal');
+	const preview_after_add_sub = (operator) => {
+		if (op_next == OPCODE.MUL) {
+			return val;
+		} else if (op_next == OPCODE.DIV) {
+			return gRegB / val;
+		} else {
+			return operator(gRegA, val);
+		}
+	}, preview_after_mul_div = (operator) => {
+		if (op_next == OPCODE.ADD || op_next == OPCODE.SUB) {
+			return gRegA + operator(gRegB, val);
+		} else {
+			return operator(gRegB, val);
+		}
+	}, operate_bitwise = (operator) => {
+		if (op_next == OPCODE.EQUAL) {
+			// if the next operator is Equal key, sum up first then do bitwise operation
+			gRegA = operator(gRegA + gRegB, val);
+			gRegB = 0;
+		} else {
+			// if the next operator has higher priority, move value to gRegB
+			if (op_next == OPCODE.MUL || op_next == OPCODE.DIV || op_next == OPCODE.MOD) {
+				gRegB = val;
+				gIntMulDivCnt++;
+			} else {
+			// if the next operator has the same priority, update gRegA
+				gRegA = operator(gRegA, val);
+			}
+		}
+	}, operate_add_sub = (operator) => {
+		// if the next operator has higher priority, move value to gRegB
+		if (op_next == OPCODE.MUL || op_next == OPCODE.DIV || op_next == OPCODE.MOD) {
+			gRegB = operator(gRegB, val);
+			gIntMulDivCnt++;
+		} else {
+		// if the next operator has the same priority, update gRegA
+			gRegA = operator(gRegA, val);
+			gIntMulDivCnt = 0;
+		}
+	};
 	if (preview === true) {
 		switch (opcode) {
 			case OPCODE.ADD:
-				if (op_next == OPCODE.MUL) {
-					return val;
-				} else if (op_next == OPCODE.DIV) {
-					return gRegB / val;
-				} else {
-					return gRegA + val;
-				}
+				return preview_after_add_sub((a, b) => a + b);
 			case OPCODE.SUB:
-				if (op_next == OPCODE.MUL) {
-					return val;
-				} else if (op_next == OPCODE.DIV) {
-					return gRegB / val;
-				} else {
-					return gRegA - val;
-				}
+				return preview_after_add_sub((a, b) => a - b);
 			case OPCODE.MUL:
-				if (op_next == OPCODE.ADD || op_next == OPCODE.SUB) {
-					return gRegA + gRegB * val;
-				} else {
-					return gRegB * val;
-				}
+				return preview_after_mul_div((a, b) => a * b);
 			case OPCODE.DIV:
-				if (op_next == OPCODE.ADD || op_next == OPCODE.SUB) {
-					return gRegA - gRegB / val;
-				} else {
-					return gRegB / val;
-				}
+				return preview_after_mul_div((a, b) => a / b);
+			default:
+				return 0;
 		}
-		return 0;
 	}
 	switch (opcode) {
 		case OPCODE.OR:
-			if (op_next == OPCODE.EQUAL) {
-				gRegA = (gRegA + gRegB) | val;
-				gRegB = 0;
-			} else {
-				if (op_next == OPCODE.MUL || op_next == OPCODE.DIV || op_next == OPCODE.MOD) {
-					gRegB = val;
-					gIntMulDivCnt++;
-				} else {
-					gRegA = gRegA | val;
-				}
-			}
+			operate_bitwise((a, b) => a | b);
 			break;
 		case OPCODE.XOR:
-			if (op_next == OPCODE.EQUAL) {
-				gRegA = (gRegA + gRegB) ^ val;
-				gRegB = 0;
-			} else {
-				if (op_next == OPCODE.MUL || op_next == OPCODE.DIV || op_next == OPCODE.MOD) {
-					gRegB = val;
-					gIntMulDivCnt++;
-				} else {
-					gRegA = gRegA ^ val;
-				}
-			}
+			operate_bitwise((a, b) => a ^ b);
 			break;
 		case OPCODE.AND:
-			if (op_next == OPCODE.EQUAL) {
-				gRegA = (gRegA + gRegB) & val;
-				gRegB = 0;
-			} else {
-				if (op_next == OPCODE.MUL || op_next == OPCODE.DIV || op_next == OPCODE.MOD) {
-					gRegB = val;
-					gIntMulDivCnt++;
-				} else {
-					gRegA = gRegA & val;
-				}
-			}
+			operate_bitwise((a, b) => a & b);
 			break;
 		case OPCODE.MOD:
 			gRegB = gRegB % val;
 			break;
 		case OPCODE.ADD:
-			if (op_next == OPCODE.MUL || op_next == OPCODE.DIV || op_next == OPCODE.MOD) {
-				gRegB = val;
-				gIntMulDivCnt++;
-			} else {
-				gRegA += val;
-				gIntMulDivCnt = 0;
-			}
+			operate_add_sub((a, b) => a + b);
 			break;
 		case OPCODE.SUB:
-			if (op_next == OPCODE.MUL || op_next == OPCODE.DIV) {
-				gRegB = -val;
-				gIntMulDivCnt++;
-			} else {
-				gRegA -= val;
-				gIntMulDivCnt = 0;
-			}
+			operate_add_sub((a, b) => a - b);
 			break;
 		case OPCODE.MUL:
 			gRegB = (gIntMulDivCnt == 0) ? val : gRegB * val; 
@@ -251,6 +229,8 @@ const calculation = (opcode, op_next, preview) => {
 	}
 	if (op_next == OPCODE.EQUAL) {
 		gRegSum = gRegA + gRegB;
+
+		// preserve the last operand for continuous '=' pressed
 		if (opcode == OPCODE.MUL || opcode == OPCODE.DIV) {
 			gRegA = 0;
 			gRegB = gRegSum;
@@ -262,10 +242,11 @@ const calculation = (opcode, op_next, preview) => {
 }
 const btn_AC_clicked = () => {
 	// debug('ac0');
-	if (gEMode == OPMODE.AC) {
-		gEMode = OPMODE.NUM;
+	if (gEMode == OPMODE.OP) {
+		gEMode = OPMODE.AC;
+		btn_AC.innerText = "AC";
 		clearPadBtnState();
-		ac_reset();
+		updateLCD("0", gEType, gEBase)
 	} else if (gEMode == OPMODE.NUM) {
 		gEMode = OPMODE.AC;
 		gECodeActive = gECodePrev;
@@ -274,7 +255,7 @@ const btn_AC_clicked = () => {
 		btn_AC.innerText = "AC";
 		gStrInput = "0";
 		updateLCD(gStrInput, gEType, gEBase)
-} else {
+	} else {
 		clearPadBtnState();
 		ac_reset();
 	}
@@ -350,11 +331,15 @@ num_pad.addEventListener('click', e => {
 		return;
 	var key = _this.dataset.tag;
 	var value = getValueAtBase(gStrInput, gEBase);
+	const operate_immediately = (operator) => {
+		const value_disp = parseInt(valueDec.innerText);
+		updateLCD(operator(value_disp), gEType, gEBase);
+	};
 	switch (key) {
-		case "+/-": gStrInput = sprintf(-1 * value, gEBase, gEBase, gEType); break;
-		case "shr": gStrInput = sprintf(value >> 1, gEBase, gEBase, gEType); break;
-		case "shl": gStrInput = sprintf(value << 1, gEBase, gEBase, gEType); break;
-		case "~": gStrInput = sprintf(~value, gEBase, gEBase, gEType); break;
+		case "+/-": operate_immediately(val => -1 * val); break;
+		case "shr": operate_immediately(val => val >> 1); break;
+		case "shl": operate_immediately(val => val << 1); break;
+		case "~":   operate_immediately(val => ~val); break;
 		case "ac": btn_AC_clicked(); break;
 		case "+": gECodeActive = OPCODE.ADD; btn_PLUS_MINUS_clicked(_this); break;
 		case "-": gECodeActive = OPCODE.SUB; btn_PLUS_MINUS_clicked(_this); break;
