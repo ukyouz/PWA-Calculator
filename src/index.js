@@ -1,7 +1,7 @@
 require('./index.html')
 require('./about.html')
 import '../node_modules/@fortawesome/fontawesome-free/js/all'
-import { constants } from 'zlib'
+// import { constants } from 'zlib'
 import('./fonts/EHSMB.ttf')
 require('./sass/main.sass')
 
@@ -141,40 +141,112 @@ const ac_reset = () => {
 /*
  * Event handlers
  */
-const calculation = (opcode, op_next) => {
+const calculation = (opcode, op_next, preview) => {
+	preview = preview || false;
 	var val = getValueAtBase(gStrInput, gEBase);
-	var reg_a = 0, reg_b = 0;
-	console.log(getEnumByIndex(OPCODE, opcode), val, getEnumByIndex(OPCODE, op_next));
+	// var reg_a = 0, reg_b = 0;
+	debug('cal');
+	if (preview === true) {
+		switch (opcode) {
+			case OPCODE.ADD:
+				if (op_next == OPCODE.MUL) {
+					return val;
+				} else if (op_next == OPCODE.DIV) {
+					return gRegB / val;
+				} else {
+					return gRegA + val;
+				}
+			case OPCODE.SUB:
+				if (op_next == OPCODE.MUL) {
+					return val;
+				} else if (op_next == OPCODE.DIV) {
+					return gRegB / val;
+				} else {
+					return gRegA - val;
+				}
+			case OPCODE.MUL:
+				if (op_next == OPCODE.ADD || op_next == OPCODE.SUB) {
+					return gRegA + gRegB * val;
+				} else {
+					return gRegB * val;
+				}
+			case OPCODE.DIV:
+				if (op_next == OPCODE.ADD || op_next == OPCODE.SUB) {
+					return gRegA - gRegB / val;
+				} else {
+					return gRegB / val;
+				}
+		}
+		return 0;
+	}
 	switch (opcode) {
+		case OPCODE.OR:
+			if (op_next == OPCODE.EQUAL) {
+				gRegA = (gRegA + gRegB) | val;
+				gRegB = 0;
+			} else {
+				if (op_next == OPCODE.MUL || op_next == OPCODE.DIV || op_next == OPCODE.MOD) {
+					gRegB = val;
+					gIntMulDivCnt++;
+				} else {
+					gRegA = gRegA | val;
+				}
+			}
+			break;
+		case OPCODE.XOR:
+			if (op_next == OPCODE.EQUAL) {
+				gRegA = (gRegA + gRegB) ^ val;
+				gRegB = 0;
+			} else {
+				if (op_next == OPCODE.MUL || op_next == OPCODE.DIV || op_next == OPCODE.MOD) {
+					gRegB = val;
+					gIntMulDivCnt++;
+				} else {
+					gRegA = gRegA ^ val;
+				}
+			}
+			break;
+		case OPCODE.AND:
+			if (op_next == OPCODE.EQUAL) {
+				gRegA = (gRegA + gRegB) & val;
+				gRegB = 0;
+			} else {
+				if (op_next == OPCODE.MUL || op_next == OPCODE.DIV || op_next == OPCODE.MOD) {
+					gRegB = val;
+					gIntMulDivCnt++;
+				} else {
+					gRegA = gRegA & val;
+				}
+			}
+			break;
+		case OPCODE.MOD:
+			gRegB = gRegB % val;
+			break;
 		case OPCODE.ADD:
-			if (op_next == OPCODE.MUL || op_next == OPCODE.DIV) {
+			if (op_next == OPCODE.MUL || op_next == OPCODE.DIV || op_next == OPCODE.MOD) {
 				gRegB = val;
 				gIntMulDivCnt++;
 			} else {
 				gRegA += val;
-				reg_a = val;
 				gIntMulDivCnt = 0;
 			}
 			break;
 		case OPCODE.SUB:
 			if (op_next == OPCODE.MUL || op_next == OPCODE.DIV) {
-				gRegB = val;
+				gRegB = -val;
 				gIntMulDivCnt++;
 			} else {
 				gRegA -= val;
-				reg_a = val;
 				gIntMulDivCnt = 0;
 			}
 			break;
 		case OPCODE.MUL:
 			gRegB = (gIntMulDivCnt == 0) ? val : gRegB * val; 
 			gIntMulDivCnt++;
-			reg_b = val;
 			break;
 		case OPCODE.DIV:
 			gRegB = (gIntMulDivCnt == 0) ? val : parseInt(gRegB / val);
 			gIntMulDivCnt++;
-			reg_b = val;
 			break;
 	}
 	if (op_next == OPCODE.EQUAL) {
@@ -189,7 +261,7 @@ const calculation = (opcode, op_next) => {
 	}
 }
 const btn_AC_clicked = () => {
-	debug('ac0');
+	// debug('ac0');
 	if (gEMode == OPMODE.AC) {
 		gEMode = OPMODE.NUM;
 		clearPadBtnState();
@@ -206,10 +278,13 @@ const btn_AC_clicked = () => {
 		clearPadBtnState();
 		ac_reset();
 	}
-	debug('ac1');
+	// debug('ac1');
 }
 const btn_modeOp_clicked = (_this) => {
+	var val = calculation(gECodePrev, gECodeActive, true);
+	updateLCD(val.toString(10), gEType, BASE.DEC);
 	if (gEMode != OPMODE.OP) {
+		// gEMode = OPMODE.IDLE;
 		prev_pad_btn = _this;
 		if (gEMode == OPMODE.IDLE) {
 			gIntMulDivCnt = 0;
@@ -229,11 +304,11 @@ const btn_modeOp_clicked = (_this) => {
 }
 const btn_PLUS_MINUS_clicked = (_this) => {
 	btn_modeOp_clicked(_this);
-	debug('+-');
+	// debug('+-');
 }
 const btn_MUL_DIV_clicked = (_this) => {
 	btn_modeOp_clicked(_this);
-	debug('*/');
+	// debug('*/');
 }
 const btn_BitOP_clicked = (_this) => {
 	btn_modeOp_clicked(_this);
@@ -255,7 +330,7 @@ const btn_NUM_clicked = (_this, key) => {
 		gStrInput = key;
 	}
 	btn_AC.innerText = "C";
-	debug(key);
+	// debug(key);
 	updateLCD(gStrInput, gEType, gEBase);
 }
 const btn_EQUAL_clicked = (_this) => {
@@ -263,7 +338,7 @@ const btn_EQUAL_clicked = (_this) => {
 	calculation(gECodePrev, OPCODE.EQUAL);
 	gEMode = OPMODE.IDLE;
 	updateLCD(gRegSum.toString(10), gEType, BASE.DEC);
-	debug('=');
+	// debug('=');
 }
 
 /*
@@ -288,7 +363,7 @@ num_pad.addEventListener('click', e => {
 		case "&": gECodeActive = OPCODE.AND; btn_BitOP_clicked(_this); break;
 		case "|": gECodeActive = OPCODE.OR; btn_BitOP_clicked(_this); break;
 		case "^": gECodeActive = OPCODE.XOR; btn_BitOP_clicked(_this); break;
-		case "%": gECodeActive = OPCODE.MOD; _this.classList.add('is-active'); break;
+		case "%": gECodeActive = OPCODE.MOD; btn_BitOP_clicked(_this); break;
 		case "=": gECodeActive = OPCODE.EQUAL; btn_EQUAL_clicked(_this); break;
 		// input number
 		default: btn_NUM_clicked(_this, key); break;

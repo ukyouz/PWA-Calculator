@@ -1,0 +1,123 @@
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+	<link rel="stylesheet" href="app.css">
+</head>
+<body>
+	<div class="panel">
+		<nav class="navbar">
+			<h1 class="site-title">Programmer Calculator v1.0</h1>
+			<div class="hamburger">
+				<div class="hamburger__bar hamburger__bar--first"></div>
+				<div class="hamburger__bar hamburger__bar--second"></div>
+				<div class="hamburger__bar hamburger__bar--third"></div>
+			</div>
+			<ul class="navbar__menu">
+				<li class="navbar__menu-item">
+					<a href="">About</a></li>
+				<li class="navbar__menu-item">
+					<a href="">Author’s Page</a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+	<div class="panel">
+		<ul class="list type-qword">
+			<li class="list__item is-line">
+				<span class="title">HEX</span>
+				<span class="content" id="valueHex">F</span>
+			</li>
+			<li class="list__item is-line is-active">
+				<span class="title">DEC</span>
+				<span class="content" id="valueDec">15</span>
+			</li>
+			<li class="list__item is-line">
+				<span class="title">OCT</span>
+				<span class="content" id="valueOct">17</span>
+			</li>
+			<li class="list__item is-line">
+				<span class="title">BIN</span>
+				<span class="content bit-32">
+					<!-- <span class="bit-offset">      24       16        8        0</span> -->
+					<span id="valueBin">11111111 11111111 11111111 11111111</span>
+				</span>
+			</li>
+		</ul>
+	</div>
+	<div class="panel">
+		<div class="pills ">
+			<div class="pill is-grow" id="btnType">DWORD</div>
+<!-- 			<div class="pill" id="btnNumpad">
+				<div class="pad-icon">
+					<span class="pad-icon__pad"></span>
+					<span class="pad-icon__pad"></span>
+					<span class="pad-icon__pad"></span>
+					<span class="pad-icon__pad"></span>
+					<span class="pad-icon__pad"></span>
+					<span class="pad-icon__pad"></span>
+					<span class="pad-icon__pad"></span>
+					<span class="pad-icon__pad"></span>
+					<span class="pad-icon__pad"></span>
+					<span class="pad-icon__pad is-white"></span>
+					<span class="pad-icon__pad"></span>
+				</div>
+			</div>
+			<div class="pill" id="btnBitmap">
+				<div class="pad-icon">
+					<span class="pad-icon__bit">0</span>
+					<span class="pad-icon__bit">1</span>
+					<span class="pad-icon__bit">0</span>
+					<span class="pad-icon__bit">1</span>
+					<span class="pad-icon__bit">0</span>
+					<span class="pad-icon__bit">1</span>
+					<span class="pad-icon__bit">0</span>
+					<span class="pad-icon__bit">0</span>
+					<span class="pad-icon__bit">1</span>
+				</div></div> -->
+		</div>
+	</div>
+	<div class="panel">
+		<div class="pad" id="numpad">
+			<div class="pad__btn btn is-secondary btn-sm" data-tag="%">MOD</div>
+			<div class="pad__btn btn is-white is-disabled" data-tag="d">D</div>
+			<div class="pad__btn btn is-white is-disabled" data-tag="e">E</div>
+			<div class="pad__btn btn is-white is-disabled" data-tag="f">F</div>
+			<div class="pad__btn btn is-warning btn-sm" data-tag="ac" id="btnAC">AC</div>
+			<div class="pad__btn btn is-secondary btn-sm" data-tag="&">AND</div>
+			<div class="pad__btn btn is-white is-disabled" data-tag="a">A</div>
+			<div class="pad__btn btn is-white is-disabled" data-tag="b">B</div>
+			<div class="pad__btn btn is-white is-disabled" data-tag="c">C</div>
+			<div class="pad__btn btn is-warning" data-tag="/"><i class="fas fa-xs fa-divide no-act"></i></div> 
+			<div class="pad__btn btn is-secondary btn-sm" data-tag="|">OR</div>
+			<div class="pad__btn btn is-white" data-tag="7">7</div>
+			<div class="pad__btn btn is-white" data-tag="8">8</div>
+			<div class="pad__btn btn is-white" data-tag="9">9</div>
+			<div class="pad__btn btn is-warning" data-tag="*"><i class="fas fa-xs fa-times no-act"></i></div>
+			<div class="pad__btn btn is-secondary btn-sm" data-tag="^">XOR</div>
+			<div class="pad__btn btn is-white" data-tag="4">4</div>
+			<div class="pad__btn btn is-white" data-tag="5">5</div>
+			<div class="pad__btn btn is-white" data-tag="6">6</div>
+			<div class="pad__btn btn is-warning" data-tag="-"><i class="fas fa-xs fa-minus no-act"></i></div>
+			<div class="pad__btn btn is-primary btn-sm" data-tag="~">NOT</div>
+			<div class="pad__btn btn is-white" data-tag="1">1</div>
+			<div class="pad__btn btn is-white" data-tag="2">2</div>
+			<div class="pad__btn btn is-white" data-tag="3">3</div>
+			<div class="pad__btn btn is-warning" data-tag="+"><i class="fas fa-xs fa-plus no-act"></i></div>
+			<div class="pad__btn btn is-primary" data-tag="shl"><i class="fas fa-xs fa-angle-double-left no-act"></i></div>
+			<div class="pad__btn btn is-primary" data-tag="shr"><i class="fas fa-xs fa-angle-double-right no-act"></i></div>
+			<div class="pad__btn btn is-white" data-tag="0">0</div>
+			<div class="pad__btn btn is-primary" data-tag="+/-">
+				<span class="symbol symbol-plus no-act">+</span>
+				<span class="symbol symbol-slash no-act">|</span>
+				<span class="symbol symbol-minus no-act">-</span>
+			</div>
+			<div class="pad__btn btn is-warning" data-tag="="><i class="fas fa-xs fa-equals no-act"></i></div>
+		</div>
+	</div>
+	<!-- <a href="about.html">About CCC</a> -->
+	<script src="app.js"></script>
+</body>
+</html>
