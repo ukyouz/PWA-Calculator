@@ -7,10 +7,24 @@ require('./sass/main.sass')
 /*
  * Global states, and helper functions
  */
+const TYPE_HAS_BIT = type => 8 * Math.pow(2, type);
+const IS_OVERFLOW = (val, type) => {
+	return val < -1 * Math.pow(2, TYPE_HAS_BIT(type) - 1) || val > Math.pow(2, TYPE_HAS_BIT(type) - 1) - 1;
+	// if (val < 0) { 
+	// 	val += Math.pow(2, TYPE_HAS_BIT(type));
+	// 	if (val < Math.pow(2, TYPE_HAS_BIT(type) - 1)) {
+	// 		return true;
+	// 	} else {
+	// 		return false;
+	// 	}
+	// } else {
+	// 	return (val >> TYPE_HAS_BIT(type)) != 0;
+	// }
+};
 const TYPE = { BYTE: 0, WORD: 1, DWORD: 2}
 const BASE = { HEX: 0, DEC: 1, OCT: 2, BIN: 3 }
 const OPCODE = { NONE: 0, EQUAL: 1, MOD: 2, AND: 3, OR: 4, XOR: 5, ADD: 6, SUB: 7, MUL: 8, DIV: 9 };
-const OPMODE = { IDLE: 0, AC: 1, OP: 2, NUM: 3 };
+const OPMODE = { IDLE: 0, AC: 1, OP: 2, NUM: 3, OF: 4 }; // OF is overflow
 const getEnumByIndex = (enum_name, id) => {
 	for (var k in enum_name) {
 		if (enum_name[k] == id)
@@ -30,6 +44,11 @@ const getEnumByIndex = (enum_name, id) => {
 		case BASE.OCT: val = parseInt(val_str, 8); break;
 		case BASE.BIN: val = parseInt(val_str, 2); break;
 	}
+	if (base != BASE.DEC) {
+		if (val > Math.pow(2, TYPE_HAS_BIT(gEType) - 1) - 1) {
+			val -= Math.pow(2, TYPE_HAS_BIT(gEType));
+		};
+	}
 	return val;
 }, sprintf = (val_str, val_base, tar_base, type) => {
 	var len = getTypeLen(type);
@@ -48,7 +67,7 @@ const getEnumByIndex = (enum_name, id) => {
 /*
  * Global variables
  */
-var gEType = TYPE.DWORD;
+var gEType = TYPE.BYTE;
 var gEBase = BASE.DEC;
 var gRegA = 0, gRegB = 0, gRegSum = 0, gIntMulDivCnt = 0, gEMode = OPMODE.IDLE;
 var gECodePrevPrev = OPCODE.NONE, gECodePrev = OPCODE.NONE, gECodeActive = OPCODE.NONE;
@@ -73,6 +92,12 @@ const clearPadBtnState = () => {
 btn_type.addEventListener('click', e => {
 	gEType = (gEType + 1) % Object.keys(TYPE).length;
 	btn_type.innerText = getEnumByIndex(TYPE, gEType);
+	var val = getValueAtBase(gStrInput, gEBase);
+	if (IS_OVERFLOW(val, gEType)) {
+		const bit = TYPE_HAS_BIT(gEType);
+		// trancate the overflow bits
+		gStrInput = sprintf(val.toString(2).padStart(32, "0").substr(32-bit, bit), BASE.BIN, gEBase, gEType);
+	}
 	updateLCD(gStrInput, gEType, gEBase);
 })
 // Base changed
@@ -111,6 +136,13 @@ var debug = (key) => {
 	);
 };
 const updateLCD = (val_str, type, base) => {
+	if (gEMode == OPMODE.OF) {
+		valueBin.innerText = "OVERFLOW";
+		valueDec.innerText = "OVERFLOW";
+		valueHex.innerText = "OVERFLOW";
+		valueOct.innerText = "OVERFLOW";
+		return true;
+	}
 	var len = getTypeLen(type);
 	var binStr = sprintf(val_str, base, BASE.BIN, type);
 	var binString = binStr.substr(24, 8);
@@ -119,7 +151,8 @@ const updateLCD = (val_str, type, base) => {
 	if (len > 16)
 		binString = binStr.substr(0, 8) + " " + binStr.substr(8, 8) + "\n" + binString;
 	valueBin.innerText = binString;
-	valueDec.innerText = sprintf(val_str, base, BASE.DEC, type);
+	var dec_str = sprintf(val_str, base, BASE.DEC, type);
+	valueDec.innerText = dec_str;
 	valueHex.innerText = sprintf(val_str, base, BASE.HEX, type);
 	valueOct.innerText = sprintf(val_str, base, BASE.OCT, type);
 }, clearLCD = () => {
@@ -145,7 +178,7 @@ const updateLCD = (val_str, type, base) => {
 const calculation = (opcode, op_next, preview) => {
 	preview = preview || false;
 	var val = getValueAtBase(gStrInput, gEBase);
-	debug('cal');
+	// debug('cal');
 	const preview_after_add_sub = (operator) => {
 		if (op_next == OPCODE.MUL) {
 			return (gRegB == 0) ? val : gRegB * val;
@@ -249,12 +282,17 @@ const btn_AC_clicked = () => {
 	}
 	// debug('ac1');
 }, btn_OP_clicked = (_this) => {
+	if (gEMode == OPMODE.OF)
+		return;
 	if (gEMode != OPMODE.IDLE) {
 		var val = calculation(gECodePrev, gECodeActive, true);
 		clearLCD();
 		setTimeout(() => {
-			updateLCD(val.toString(10), gEType, BASE.DEC);
+			updateLCD(val.toString(10), gEType, BASE.DEC)
 		}, 20);
+		if (IS_OVERFLOW(val, gEType)) {
+			gEMode = OPMODE.OF;
+		}
 	}
 	if (gEMode != OPMODE.OP) {
 		// gEMode = OPMODE.IDLE;
@@ -277,25 +315,35 @@ const btn_AC_clicked = () => {
 	gEMode = OPMODE.OP;
 	_this.classList.add('is-active')
 }, btn_NUM_clicked = (_this, key) => {
+	// debug(key);
+	if (gEMode == OPMODE.OF) return;
 	if (gEMode == OPMODE.NUM) {
-		gStrInput += key;
+		var val_str = gStrInput + key;
+		console.log(val_str, getValueAtBase(val_str, gEBase), getEnumByIndex(BASE, gEBase), IS_OVERFLOW(getValueAtBase(val_str, gEBase), gEType))
+		if (IS_OVERFLOW(getValueAtBase(val_str, gEBase), gEType)) {
+			gEMode = OPMODE.OF;
+		} else {
+			gStrInput += key;
+		}
 	} else if (gEMode == OPMODE.OP || gEMode == OPMODE.AC) {
 		clearPadBtnState();
 		gECodePrevPrev = gECodePrev;
 		gECodePrev = gECodeActive;
 		gECodeActive = OPCODE.NONE;
-		if (gEMode == OPMODE.OP)
+		if (gEMode == OPMODE.OP) {
 			calculation(gECodePrevPrev, gECodePrev);
+		}
 		gStrInput = key;
+		gEMode = OPMODE.NUM;
 	} else if (gEMode == OPMODE.IDLE) {
 		ac_reset();
 		gStrInput = key;
+		gEMode = OPMODE.NUM;
 	}
-	gEMode = OPMODE.NUM;
 	btn_AC.innerText = "C";
-	// debug(key);
 	updateLCD(gStrInput, gEType, gEBase);
 }, btn_EQUAL_clicked = (_this) => {
+	if (gEMode == OPMODE.OF) return;
 	clearPadBtnState();
 	if (gEMode == OPMODE.OP) {
 		calculation(gECodePrev, gECodeActive);
@@ -306,9 +354,13 @@ const btn_AC_clicked = () => {
 	calculation(gECodePrev, OPCODE.EQUAL);
 	gEMode = OPMODE.IDLE;
 	clearLCD();
-	setTimeout(() => {
-		updateLCD(gRegSum.toString(10), gEType, BASE.DEC);
-	}, 20);
+	if (IS_OVERFLOW(gRegSum, gEType)) {
+		gEMode = OPMODE.OF;
+	} else {
+		setTimeout(() => {
+			updateLCD(gRegSum.toString(10), gEType, BASE.DEC)
+		}, 20);
+	}
 	// debug('=');
 };
 
@@ -320,8 +372,16 @@ num_pad.addEventListener('click', e => {
 	if (!_this.classList.contains('pad__btn') || _this.classList.contains('is-disabled'))
 		return;
 	const operate_immediately = (operator) => {
-		const value_disp = parseInt(valueDec.innerText);
-		updateLCD(operator(value_disp), gEType, gEBase);
+		var new_val = operator(parseInt(valueDec.innerText));
+		// debug('imm');
+		console.log(new_val);
+		if (IS_OVERFLOW(new_val, gEType)) {
+			gEMode = OPMODE.OF;
+		} else {
+			var val_str = sprintf(new_val.toString(), BASE.DEC, gEBase, gEType);
+			updateLCD(val_str, gEType, gEBase);
+			gStrInput = val_str;
+		};
 	};
 	var key = _this.dataset.tag;
 	switch (key) {
@@ -334,6 +394,7 @@ num_pad.addEventListener('click', e => {
 		case "^": gECodeActive = OPCODE.XOR; btn_OP_clicked(_this); break;
 		case "%": gECodeActive = OPCODE.MOD; btn_OP_clicked(_this); break;
 		case "=": btn_EQUAL_clicked(_this); break;
+		case "pow": operate_immediately(val => Math.pow(2, val)); break;
 		case "+/-": operate_immediately(val => -1 * val); break;
 		case "shr": operate_immediately(val => val >> 1); break;
 		case "shl": operate_immediately(val => val << 1); break;
@@ -342,6 +403,10 @@ num_pad.addEventListener('click', e => {
 		// input number
 		default: btn_NUM_clicked(_this, key); break;
 	}
+	if (gEMode == OPMODE.OF) {
+		console.log("gEMode="+gEMode);
+		updateLCD(0, gEType, gEBase);
+	};
 })
 
 ac_reset();
