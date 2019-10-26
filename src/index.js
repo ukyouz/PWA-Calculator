@@ -4,6 +4,7 @@ require('./about.html')
 import('../node_modules/@fortawesome/fontawesome-free/js/all')
 import('./fonts/EHSMB.ttf')
 require('./sass/main.sass')
+require('./install.js')
 
 /*
  * Global states, and helper functions

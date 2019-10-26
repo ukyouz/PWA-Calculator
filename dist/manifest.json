@@ -3,11 +3,11 @@
 	"short_name": "Calculator",
 	"start_url": "/index.html",
 	"icons": [{
-		"src": "/images/calculator.png",
-		"sizes": "512x512",
+		"src": "/images/icon-256x256.png",
+		"sizes": "256x256",
 		"type": "image/png"
 	}],
 	"display": "standalone",
-	"background_color": "#616265",
-	"theme_color": "#ff9f0b"
+	"background_color": "#a0a0b9",
+	"theme_color": "#e5eaec"
   }

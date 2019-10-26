@@ -11,6 +11,8 @@ sup
 	margin-top: -1em
 .no-act
 	pointer-events: none
+.no-select
+	user-select: none
 .btn
 	$btn-border-radius-bottom: $btn-border-radius + 5px
 	border: 1px solid
@@ -55,8 +57,9 @@ sup
 			&.is-active
 				background: darken($color, 10%)
 			
-	// &.is-warning
-	
+	&.is-link
+		color: #373fa5
+		text-decoration: none
 
 .pills
 	display: flex
