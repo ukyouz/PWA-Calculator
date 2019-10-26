@@ -1,4 +1,4 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[4],{6:function(e,t,n){"use strict";
+(window.webpackJsonp=window.webpackJsonp||[]).push([[4],{6:function(e,t){
 /*
  * @license
  * Your First PWA Codelab (https://g.co/codelabs/pwa)
@@ -15,4 +15,5 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License
- */let o=null;const s=document.getElementById("butInstall");s.addEventListener("click",(function(e){o.prompt(),e.srcElement.setAttribute("hidden",!0),o.userChoice.then(e=>{"accepted"===e.outcome?console.log("User accepted the A2HS prompt",e):console.log("User dismissed the A2HS prompt",e),o=null})})),window.addEventListener("beforeinstallprompt",(function(e){o=e,s.removeAttribute("hidden")})),window.addEventListener("appinstalled",(function(e){console.log("Weather App was installed.",e)}))}}]);
+ */
+let n=null;const o=document.getElementById("butInstall");o.addEventListener("click",(function(e){n.prompt(),e.srcElement.setAttribute("hidden",!0),n.userChoice.then(e=>{"accepted"===e.outcome?console.log("User accepted the A2HS prompt",e):console.log("User dismissed the A2HS prompt",e),n=null})})),window.addEventListener("beforeinstallprompt",(function(e){n=e,o.removeAttribute("hidden")})),window.addEventListener("appinstalled",(function(e){console.log("Weather App was installed.",e)}))}}]);

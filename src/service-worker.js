@@ -6,19 +6,21 @@ const CACHE_NAME = 'zpcc-v1';
 const FILES_TO_CACHE = [
   '/',
   '/index.html',
+  '/0.js',
+  '/1.js',
   '/2.js',
   '/3.js',
   '/4.js',
   '/app.js',
   '/app.css',
-  '/images/calculator.png',
+  '/images/icon-256x256.png',
   '/fonts/EHSMB.ttf',
   'https://fonts.googleapis.com/css?family=PT+Sans:400,700&display=swap',
 ];
 
 self.addEventListener('install', (evt) => {
-  console.log('[ServiceWorker] Install');
   // CODELAB: Precache static resources here.
+  console.log('[ServiceWorker] Install');
   evt.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('[ServiceWorker] Pre-caching offline page');
@@ -50,12 +52,12 @@ self.addEventListener('fetch', (evt) => {
   // CODELAB: Add fetch event handler here.
   console.log("[Fetch]");
   evt.respondWith(
-      caches.open(CACHE_NAME).then((cache) => {
+      caches.open(CACHE_NAME).then( cache => {
         return cache.match(evt.request)
           .then((response) => {
             // console.log(response, fetch(evt.request));
-              return response || fetch(evt.request);
-            });
+            return response || fetch(evt.request);
+          });
       })
   );
 });
