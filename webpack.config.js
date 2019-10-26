@@ -7,7 +7,8 @@ module.exports = {
 	// config root of source file
 	context: path.resolve(__dirname, 'src'),
 	entry: {
-		app: './index.js'
+		sw: './service-worker.js',
+		app: './index.js',
 	},
 	devServer: {
 		// for webpack-dev-server root

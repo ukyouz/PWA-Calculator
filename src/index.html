@@ -4,6 +4,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Document</title>
+	<!-- CODELAB: Add link rel manifest -->
+	<link rel="manifest" href="/manifest.json">
+	<!-- CODELAB: Add iOS meta tags and icons -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-title" content="Calculator PWA">
+	<link rel="apple-touch-icon" href="/images/calculator.png">
+	<!-- CODELAB: Add description here -->
+	<meta name="description" content="A simple Calculator app">
+	<meta name="theme-color" content="#a0a0b9">
 	<link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -49,7 +59,7 @@
 	</div>
 	<div class="panel">
 		<div class="pills ">
-			<div class="pill is-grow" id="btnType">BYTE</div>
+			<div class="pill is-grow" id="btnType">DWORD</div>
 <!-- 			<div class="pill" id="btnNumpad">
 				<div class="pad-icon">
 					<span class="pad-icon__pad"></span>
@@ -120,5 +130,19 @@
 	</div>
 	<!-- <a href="about.html">About CCC</a> -->
 	<script src="app.js"></script>
+	<script>
+	// CODELAB: Register service worker.
+	if ('serviceWorker' in navigator) {
+		window.addEventListener('load', function() {
+			if (navigator.serviceWorker) {
+			navigator.serviceWorker.register('./sw.js').then(function(registration) {
+				console.log('ServiceWorker registration successful with scope:',  registration.scope);
+			}).catch(function(error) {
+				console.log('ServiceWorker registration failed:', error);
+			});
+			}
+		});
+	}
+	</script>
 </body>
 </html>
