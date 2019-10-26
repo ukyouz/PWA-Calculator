@@ -1,6 +1,7 @@
 require('./index.html')
 require('./about.html')
-import '../node_modules/@fortawesome/fontawesome-free/js/all'
+// require('./service-worker.js')
+import('../node_modules/@fortawesome/fontawesome-free/js/all')
 import('./fonts/EHSMB.ttf')
 require('./sass/main.sass')
 
@@ -67,7 +68,7 @@ const getEnumByIndex = (enum_name, id) => {
 /*
  * Global variables
  */
-var gEType = TYPE.BYTE;
+var gEType = TYPE.DWORD;
 var gEBase = BASE.DEC;
 var gRegA = 0, gRegB = 0, gRegSum = 0, gIntMulDivCnt = 0, gEMode = OPMODE.IDLE;
 var gECodePrevPrev = OPCODE.NONE, gECodePrev = OPCODE.NONE, gECodeActive = OPCODE.NONE;
@@ -319,7 +320,7 @@ const btn_AC_clicked = () => {
 	if (gEMode == OPMODE.OF) return;
 	if (gEMode == OPMODE.NUM) {
 		var val_str = gStrInput + key;
-		console.log(val_str, getValueAtBase(val_str, gEBase), getEnumByIndex(BASE, gEBase), IS_OVERFLOW(getValueAtBase(val_str, gEBase), gEType))
+		// console.log(val_str, getValueAtBase(val_str, gEBase), getEnumByIndex(BASE, gEBase), IS_OVERFLOW(getValueAtBase(val_str, gEBase), gEType))
 		if (IS_OVERFLOW(getValueAtBase(val_str, gEBase), gEType)) {
 			gEMode = OPMODE.OF;
 		} else {
@@ -374,7 +375,7 @@ num_pad.addEventListener('click', e => {
 	const operate_immediately = (operator) => {
 		var new_val = operator(parseInt(valueDec.innerText));
 		// debug('imm');
-		console.log(new_val);
+		// console.log(new_val);
 		if (IS_OVERFLOW(new_val, gEType)) {
 			gEMode = OPMODE.OF;
 		} else {
@@ -404,9 +405,58 @@ num_pad.addEventListener('click', e => {
 		default: btn_NUM_clicked(_this, key); break;
 	}
 	if (gEMode == OPMODE.OF) {
-		console.log("gEMode="+gEMode);
+		// console.log("gEMode="+gEMode);
 		updateLCD(0, gEType, gEBase);
 	};
 })
+
+/*
+ * Keyboard Event
+ */
+document.addEventListener('keydown', e => {
+	var key = e.key.toLowerCase();
+	var tag = '';
+	// console.log(key);
+	switch (key) {
+		case "tab":
+			e.preventDefault();
+			document.querySelector('#btnType').click();
+			return;
+		case "backspace":
+		case "delete":
+			tag = "ac"; break;
+		case "!": tag = "~"; break;
+		case "<": tag = "shl"; break;
+		case ">": tag = "shr"; break;
+		case "enter": tag = "="; break;
+		case "+":
+		case "-":
+		case "*":
+		case "/":
+		case "%":
+		case "&":
+		case "|":
+		case "^":
+		case "~":
+		case "=":
+		case "0":
+		case "1":
+		case "2":
+		case "3":
+		case "4":
+		case "5":
+		case "6":
+		case "7":
+		case "8":
+		case "9":
+		case "a":
+		case "b":
+		case "c":
+		case "d":
+			tag = key;
+			break;
+	}
+	document.querySelector(`.pad__btn[data-tag="${tag}"]`).click();
+});
 
 ac_reset();
