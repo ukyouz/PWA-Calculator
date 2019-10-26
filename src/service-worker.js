@@ -1,14 +1,14 @@
 /* 
  */
-const CACHE_NAME = 'zpcc-test';
-const DEBUG_MODE = true;
+const CACHE_NAME = 'zpcc-v1';
 
 // CODELAB: Add list of files to cache here.
 const FILES_TO_CACHE = [
   '/',
   '/index.html',
-  '/0.js',
-  '/1.js',
+  '/2.js',
+  '/3.js',
+  '/4.js',
   '/app.js',
   '/app.css',
   '/images/calculator.png',
@@ -54,7 +54,7 @@ self.addEventListener('fetch', (evt) => {
         return cache.match(evt.request)
           .then((response) => {
             // console.log(response, fetch(evt.request));
-              return (response && !DEBUG_MODE) || fetch(evt.request);
+              return response || fetch(evt.request);
             });
       })
   );

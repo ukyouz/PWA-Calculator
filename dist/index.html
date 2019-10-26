@@ -3,23 +3,33 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Document</title>
+	<title>Calculator</title>
+	<!-- CODELAB: Add link rel manifest -->
+	<link rel="manifest" href="/manifest.json">
+	<!-- CODELAB: Add iOS meta tags and icons -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-title" content="Calculator PWA">
+	<link rel="apple-touch-icon" href="/images/icon-256x256.png">
+	<!-- CODELAB: Add description here -->
+	<meta name="description" content="A simple Calculator app">
+	<meta name="theme-color" content="#a0a0b9">
 	<link rel="stylesheet" href="app.css">
 </head>
 <body>
 	<div class="panel">
 		<nav class="navbar">
-			<h1 class="site-title">Programmer Calculator v1.0</h1>
-			<div class="hamburger">
+			<h1 class="site-title">Programmer Calculator</h1>
+			<!-- <div class="hamburger">
 				<div class="hamburger__bar hamburger__bar--first"></div>
 				<div class="hamburger__bar hamburger__bar--second"></div>
 				<div class="hamburger__bar hamburger__bar--third"></div>
-			</div>
+			</div> -->
 			<ul class="navbar__menu">
 				<li class="navbar__menu-item">
-					<a href="">About</a></li>
+					<a class="no-select" href="#" id="butInstall">download as App</a></li>
 				<li class="navbar__menu-item">
-					<a href="">Author’s Page</a>
+					<a class="no-select" href="https://zhung.com.tw" target="_blank">About</a></li>
 				</li>
 			</ul>
 		</nav>
@@ -106,6 +116,7 @@
 			<div class="pad__btn btn is-white" data-tag="2">2</div>
 			<div class="pad__btn btn is-white" data-tag="3">3</div>
 			<div class="pad__btn btn is-warning" data-tag="+"><i class="fas fa-xs fa-plus no-act"></i></div>
+			<!-- <div class="pad__btn btn is-primary" data-tag="pow">2<sup>x</sup></div> -->
 			<div class="pad__btn btn is-primary" data-tag="shl"><i class="fas fa-xs fa-angle-double-left no-act"></i></div>
 			<div class="pad__btn btn is-primary" data-tag="shr"><i class="fas fa-xs fa-angle-double-right no-act"></i></div>
 			<div class="pad__btn btn is-white" data-tag="0">0</div>
@@ -119,5 +130,19 @@
 	</div>
 	<!-- <a href="about.html">About CCC</a> -->
 	<script src="app.js"></script>
+	<script>
+	// CODELAB: Register service worker.
+	if ('serviceWorker' in navigator) {
+		window.addEventListener('load', function() {
+			if (navigator.serviceWorker) {
+			navigator.serviceWorker.register('./sw.js').then(function(registration) {
+				console.log('ServiceWorker registration successful with scope:',  registration.scope);
+			}).catch(function(error) {
+				console.log('ServiceWorker registration failed:', error);
+			});
+			}
+		});
+	}
+	</script>
 </body>
 </html>

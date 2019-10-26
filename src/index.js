@@ -1,10 +1,8 @@
 require('./index.html')
-require('./about.html')
-// require('./service-worker.js')
 import('../node_modules/@fortawesome/fontawesome-free/js/all')
 import('./fonts/EHSMB.ttf')
 require('./sass/main.sass')
-require('./install.js')
+import('./install.js')
 
 /*
  * Global states, and helper functions
