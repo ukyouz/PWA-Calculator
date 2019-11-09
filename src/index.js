@@ -1,8 +1,9 @@
 require('./index.html')
-import('../node_modules/@fortawesome/fontawesome-free/js/all')
-import('./fonts/EHSMB.ttf')
+// import('@fortawesome/fontawesome-free/js/all')
+require('@fortawesome/fontawesome-free/scss/fontawesome.scss')
+require('@fortawesome/fontawesome-free/scss/solid.scss')
 require('./sass/main.sass')
-import('./install.js')
+// import('./install.js')
 
 /*
  * Global states, and helper functions
@@ -10,16 +11,6 @@ import('./install.js')
 const TYPE_HAS_BIT = type => 8 * Math.pow(2, type);
 const IS_OVERFLOW = (val, type) => {
 	return val < -1 * Math.pow(2, TYPE_HAS_BIT(type) - 1) || val > Math.pow(2, TYPE_HAS_BIT(type) - 1) - 1;
-	// if (val < 0) { 
-	// 	val += Math.pow(2, TYPE_HAS_BIT(type));
-	// 	if (val < Math.pow(2, TYPE_HAS_BIT(type) - 1)) {
-	// 		return true;
-	// 	} else {
-	// 		return false;
-	// 	}
-	// } else {
-	// 	return (val >> TYPE_HAS_BIT(type)) != 0;
-	// }
 };
 const TYPE = { BYTE: 0, WORD: 1, DWORD: 2}
 const BASE = { HEX: 0, DEC: 1, OCT: 2, BIN: 3 }
@@ -193,19 +184,31 @@ const calculation = (opcode, op_next, preview) => {
 		} else {
 			return operator(gRegB, val);
 		}
-	}, operate_bitwise = (operator) => {
+	}, preview_after_bitwise = (operator) => { 
+		if (op_next == OPCODE.MUL) {
+			return (gRegB == 0) ? val : gRegB * val;
+		} else if (op_next == OPCODE.DIV) {
+			return (gRegB == 0) ? val : gRegB / val;
+		} else {
+			return operator(gRegA, val);
+		}
+	},operate_bitwise = (operator) => {
 		if (op_next == OPCODE.EQUAL) {
 			// if the next operator is Equal key, sum up first then do bitwise operation
 			gRegA = operator(gRegA + gRegB, val);
 			gRegB = 0;
 		} else {
 			// if the next operator has higher priority, move value to gRegB
-			if (op_next == OPCODE.MUL || op_next == OPCODE.DIV || op_next == OPCODE.MOD) {
+			if (op_next == OPCODE.MUL || op_next == OPCODE.DIV) {
 				gRegB = val;
 				gIntMulDivCnt++;
 			} else {
 				// if the next operator has the same priority, update gRegA
 				gRegA = operator(gRegA, val);
+				if (op_next == OPCODE.MOD) {
+					gRegB = gRegA;
+					gRegA = 0;
+				}
 			}
 		}
 	}, operate_add_sub = (operator) => {
@@ -221,10 +224,14 @@ const calculation = (opcode, op_next, preview) => {
 	};
 	if (preview === true) {
 		switch (opcode) {
+			case OPCODE.OR : return preview_after_bitwise((a, b) => a | b);
+			case OPCODE.XOR: return preview_after_bitwise((a, b) => a ^ b);
+			case OPCODE.AND: return preview_after_bitwise((a, b) => a & b);
 			case OPCODE.ADD: return preview_after_add_sub((a, b) => a + b);
 			case OPCODE.SUB: return preview_after_add_sub((a, b) => a - b);
 			case OPCODE.MUL: return preview_after_mul_div((a, b) => a * b);
 			case OPCODE.DIV: return preview_after_mul_div((a, b) => a / b);
+			case OPCODE.MOD: return preview_after_mul_div((a, b) => a % b);
 			default: return 0;
 		}
 	}
@@ -259,6 +266,12 @@ const calculation = (opcode, op_next, preview) => {
 		}
 	}
 };
+const simulate_active = (elem) => {
+	elem.classList.add('is-active');
+	setTimeout(() => {
+		elem.classList.remove('is-active');
+	}, 50);
+};
 const btn_AC_clicked = () => {
 	// debug('ac0');
 	if (gEMode == OPMODE.OP) {
@@ -281,7 +294,9 @@ const btn_AC_clicked = () => {
 		}, 20);
 	}
 	// debug('ac1');
+	simulate_active(btn_AC);
 }, btn_OP_clicked = (_this) => {
+	// debug('op');
 	if (gEMode == OPMODE.OF)
 		return;
 	if (gEMode != OPMODE.IDLE) {
@@ -299,12 +314,13 @@ const btn_AC_clicked = () => {
 		prev_pad_btn = _this;
 		if (gEMode == OPMODE.IDLE) {
 			gIntMulDivCnt = 0;
-			if (gECodePrev == OPCODE.ADD || gECodePrev == OPCODE.SUB) {
-				gStrInput = gRegA;
+			if (gECodePrev == OPCODE.ADD || gECodePrev == OPCODE.SUB
+			 || gECodePrev == OPCODE.AND || gECodePrev == OPCODE.XOR || gECodePrev == OPCODE.OR) {
+				gStrInput = sprintf(gRegA, BASE.DEC, gEBase, gEType);
 				gRegA = 0;
 				gECodePrev = OPCODE.ADD;
-			} else if (gECodePrev == OPCODE.MUL || gECodePrev == OPCODE.DIV) {
-				gStrInput = gRegB;
+			} else if (gECodePrev == OPCODE.MUL || gECodePrev == OPCODE.DIV || gECodePrev == OPCODE.MOD) {
+				gStrInput = sprintf(gRegB, BASE.DEC, gEBase, gEType);
 				gRegB = 0;
 				gECodePrev = OPCODE.MUL;
 			}
@@ -342,6 +358,7 @@ const btn_AC_clicked = () => {
 	}
 	btn_AC.innerText = "C";
 	updateLCD(gStrInput, gEType, gEBase);
+	simulate_active(_this);
 }, btn_EQUAL_clicked = (_this) => {
 	if (gEMode == OPMODE.OF) return;
 	clearPadBtnState();
@@ -362,13 +379,14 @@ const btn_AC_clicked = () => {
 		}, 20);
 	}
 	// debug('=');
+	simulate_active(_this);
 };
 
 /*
- * Keypad clicked
+ * Button Pad clicked
  */
-num_pad.addEventListener('click', e => {
-	var _this = e.target;
+var clickOrTouch = (('ontouchend' in window)) ? 'touchend' : 'click';
+const trigger_handler = (_this) => {
 	if (!_this.classList.contains('pad__btn') || _this.classList.contains('is-disabled'))
 		return;
 	const operate_immediately = (operator) => {
@@ -382,6 +400,7 @@ num_pad.addEventListener('click', e => {
 			updateLCD(val_str, gEType, gEBase);
 			gStrInput = val_str;
 		};
+		simulate_active(_this);
 	};
 	var key = _this.dataset.tag;
 	switch (key) {
@@ -390,7 +409,7 @@ num_pad.addEventListener('click', e => {
 		case "*": gECodeActive = OPCODE.MUL; btn_OP_clicked(_this); break;
 		case "/": gECodeActive = OPCODE.DIV; btn_OP_clicked(_this); break;
 		case "&": gECodeActive = OPCODE.AND; btn_OP_clicked(_this); break;
-		case "|": gECodeActive = OPCODE.OR;  btn_OP_clicked(_this); break;
+		case "|": gECodeActive = OPCODE.OR; btn_OP_clicked(_this); break;
 		case "^": gECodeActive = OPCODE.XOR; btn_OP_clicked(_this); break;
 		case "%": gECodeActive = OPCODE.MOD; btn_OP_clicked(_this); break;
 		case "=": btn_EQUAL_clicked(_this); break;
@@ -398,7 +417,7 @@ num_pad.addEventListener('click', e => {
 		case "+/-": operate_immediately(val => -1 * val); break;
 		case "shr": operate_immediately(val => val >> 1); break;
 		case "shl": operate_immediately(val => val << 1); break;
-		case "~":   operate_immediately(val => ~val); break;
+		case "~": operate_immediately(val => ~val); break;
 		case "ac": btn_AC_clicked(); break;
 		// input number
 		default: btn_NUM_clicked(_this, key); break;
@@ -407,7 +426,22 @@ num_pad.addEventListener('click', e => {
 		// console.log("gEMode="+gEMode);
 		updateLCD(0, gEType, gEBase);
 	};
+};
+num_pad.addEventListener(clickOrTouch, e => {
+	trigger_handler(e.target);
 })
+
+var sound_tap = null;
+const init_sounds = () => {
+	sound_tap = new Audio();
+	// sound_tap.addEventListener('ended', init_sounds, false);
+	sound_tap.src = '/pwa-calculator/audios/tapping.wav';
+};
+num_pad.addEventListener('touchstart', (e) => {
+	init_sounds();
+	sound_tap.currentTime = 0;
+	console.log(sound_tap.play(), sound_tap.currentTime);
+});
 
 /*
  * Keyboard Event
@@ -455,7 +489,7 @@ document.addEventListener('keydown', e => {
 			tag = key;
 			break;
 	}
-	document.querySelector(`.pad__btn[data-tag="${tag}"]`).click();
+	trigger_handler(document.querySelector(`.pad__btn[data-tag="${tag}"]`));
 });
 
 ac_reset();

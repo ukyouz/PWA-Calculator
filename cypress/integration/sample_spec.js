@@ -47,6 +47,10 @@ describe('My First Test', function () {
 		check_display([4, '+', 3, '-', 1, '=', '*', '3', '='], 18);
 		check_display([4, '+', 3, '-', 1, '=', '/', '2', '='], 3);
 
+		check_display([1,3, '%', 8, '='], 5);
+		check_display([5, '|', 9, '%', 8, '='], 5);
+		check_display([5, '|', 9, '=', '%', 8, '='], 5);
+
 		check_display([9, '+', '='], 18);
 		check_display([9, '*', '='], 81);
 		check_display([9, '/', '='], 1);
@@ -54,6 +58,7 @@ describe('My First Test', function () {
 	describe('Display Check', function () {
 		check_display([1, '+', 2, '+'], 3);
 		check_display([1, '+', 2, '*'], 2);
+		check_display([5, '|', 9, '+'], 13);
 		check_display([1, '+', 2, '*', 3, '+'], 7);
 		check_display([1, '+', 2, '*', 3, '*'], 6);
 		check_display([1, '-', 2, '*', 3, '+'], -5);

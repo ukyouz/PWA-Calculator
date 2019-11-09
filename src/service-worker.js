@@ -1,20 +1,20 @@
 /* 
  */
-const CACHE_NAME = 'zpcc-v1';
+const CACHE_NAME = 'zpcc-v1.2.3';
 
 // CODELAB: Add list of files to cache here.
 const FILES_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/0.js',
-  '/1.js',
-  '/2.js',
-  '/3.js',
-  '/4.js',
-  '/app.js',
-  '/app.css',
-  '/images/icon-256x256.png',
-  '/fonts/EHSMB.ttf',
+  './',
+  './index.html',
+  './sw.js',
+  './app.js',
+  './install.js',
+  './app.css',
+  './audios/tapping.wav',
+  './images/icon-256x256.png',
+  './fonts/EHSMB.ttf',
+  './fonts/fa-solid-900.ttf',
+  './fonts/fa-regular-400.ttf',
   'https://fonts.googleapis.com/css?family=PT+Sans:400,700&display=swap',
 ];
 

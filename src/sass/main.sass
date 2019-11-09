@@ -1,6 +1,12 @@
 @import 'reset.sass'
 @import 'base.sass'
-@import url('https://fonts.googleapis.com/css?family=PT+Sans:400,700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=PT+Sans:400,700&display=swap')
+@font-face
+	font-family: 'Electronic Highway Sign'
+	font-style: normal
+	font-weight: 400
+	// font-display: swap
+	src: url('/pwa-calculator/fonts/EHSMB.ttf')
 
 $grid-col-gap: 10px
 @mixin flex-center
@@ -8,6 +14,9 @@ $grid-col-gap: 10px
 	align-items: center
 	justify-content: center
 
+html
+	touch-action: manipulation
+	-webkit-text-size-adjust: none
 body
 	font-family: "PT Sans", sans-serif
 	background: #e5eaec

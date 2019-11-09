@@ -7,12 +7,13 @@ module.exports = {
 	// config root of source file
 	context: path.resolve(__dirname, 'src'),
 	entry: {
+		install: './install.js',
 		sw: './service-worker.js',
-		app: './index.js',
+		app: './index.js'
 	},
 	devServer: {
 		// for webpack-dev-server root
-        contentBase: './dist',
+        contentBase: path.join(__dirname, 'dist'),
 	},
 	module: {
 		// loader to entry js
@@ -67,14 +68,14 @@ module.exports = {
 	plugins: [
 		new MiniCssExtractPlugin({
 			filename: '[name].css',
-			chunkFilename: '[id]_[hash].css'
+			// chunkFilename: '[id]_[hash].css'
 		})
 	],
 	output: {
 		/*
 		 * for output ./dist/app.js
 		 */
-		path: path.resolve('./dist'),
+		path: path.resolve('./dist/pwa-calculator'),
 		filename: '[name].js'
 	}	
 }

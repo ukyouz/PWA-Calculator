@@ -13,6 +13,8 @@ sup
 	pointer-events: none
 .no-select
 	user-select: none
+.is-hidden
+	display: none
 .btn
 	$btn-border-radius-bottom: $btn-border-radius + 5px
 	border: 1px solid
@@ -20,6 +22,7 @@ sup
 	border-radius: $btn-border-radius $btn-border-radius $btn-border-radius-bottom $btn-border-radius-bottom
 	cursor: pointer
 	position: relative
+	user-select: none
 	&:after
 		content: ''
 		display: block
@@ -31,7 +34,8 @@ sup
 		background: darken($btn-border-color, 80%)
 		border-radius: $btn-border-radius $btn-border-radius $btn-border-radius-bottom $btn-border-radius-bottom
 		z-index: -1
-	&:active, &.is-disabled, &.is-active
+	// &:active,
+	&.is-disabled, &.is-active
 		border-bottom-width: 1px
 		margin-top: $btn-depth - 1px
 		&:after
@@ -70,7 +74,7 @@ sup
 		padding: 0 1rem
 		text-align: center
 		cursor: pointer
-		margin-right: 
+		user-select: none
 		&.is-grow
 			flex-grow: 1
 		&:hover

@@ -1,20 +1,21 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Calculator</title>
 	<!-- CODELAB: Add link rel manifest -->
-	<link rel="manifest" href="/manifest.json">
+	<link rel="manifest" href="manifest.json">
 	<!-- CODELAB: Add iOS meta tags and icons -->
+	<meta name="format-detection" content="telephone=no">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<meta name="apple-mobile-web-app-title" content="Calculator PWA">
-	<link rel="apple-touch-icon" href="/images/icon-256x256.png">
+	<link rel="apple-touch-icon" href="images/icon-256x256.png">
 	<!-- CODELAB: Add description here -->
 	<meta name="description" content="A simple Calculator app">
 	<meta name="theme-color" content="#a0a0b9">
-	<link rel="stylesheet" href="app.css">
+	<link rel="stylesheet" href="app.css?v=1.2.3">
 </head>
 <body>
 	<div class="panel">
@@ -57,8 +58,8 @@
 			</li>
 		</ul>
 	</div>
-	<div class="panel">
-		<div class="pills ">
+	<div class="panel no-select">
+		<div class="pills">
 			<div class="pill is-grow" id="btnType">DWORD</div>
 <!-- 			<div class="pill" id="btnNumpad">
 				<div class="pad-icon">
@@ -100,7 +101,7 @@
 			<div class="pad__btn btn is-white is-disabled" data-tag="a">A</div>
 			<div class="pad__btn btn is-white is-disabled" data-tag="b">B</div>
 			<div class="pad__btn btn is-white is-disabled" data-tag="c">C</div>
-			<div class="pad__btn btn is-warning" data-tag="/"><i class="fas fa-xs fa-divide no-act"></i></div> 
+			<div class="pad__btn btn is-warning" data-tag="/"><i class="fas fa-xs fa-divide no-act"></i></div>
 			<div class="pad__btn btn is-secondary btn-sm" data-tag="|">OR</div>
 			<div class="pad__btn btn is-white" data-tag="7">7</div>
 			<div class="pad__btn btn is-white" data-tag="8">8</div>
@@ -128,8 +129,7 @@
 			<div class="pad__btn btn is-warning" data-tag="="><i class="fas fa-xs fa-equals no-act"></i></div>
 		</div>
 	</div>
-	<!-- <a href="about.html">About CCC</a> -->
-	<script src="app.js"></script>
+	<script src="app.js?v=1.2.3"></script>
 	<script>
 	// CODELAB: Register service worker.
 	if ('serviceWorker' in navigator) {
