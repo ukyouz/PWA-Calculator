@@ -1,6 +1,6 @@
 /* 
  */
-const CACHE_NAME = 'zpcc-v1.2.3';
+const CACHE_NAME = 'zpcc-v2.1.0';
 
 // CODELAB: Add list of files to cache here.
 const FILES_TO_CACHE = [
