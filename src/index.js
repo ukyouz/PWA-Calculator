@@ -429,19 +429,32 @@ const trigger_handler = (_this) => {
 };
 num_pad.addEventListener(clickOrTouch, e => {
 	trigger_handler(e.target);
-})
+}, { passive: false });
+document.addEventListener('touchstart', (event) => {
+    if (event.touches.length > 1) {
+       event.preventDefault();
+    }
+}, { passive: false });
+var lastTouchEnd = 0;
+document.addEventListener('touchend', (event) => {
+	var now = (new Date()).getTime();
+	if (now - lastTouchEnd <= 300) {
+		event.preventDefault();
+	}
+	lastTouchEnd = now;
+}, false);
 
 var sound_tap = null;
-sound_tap.src = './audios/tapping.wav';
 const init_sounds = () => {
 	sound_tap = new Audio();
 	// sound_tap.addEventListener('ended', init_sounds, false);
 	sound_tap.src = './audios/tapping.wav';
 };
+init_sounds();
 num_pad.addEventListener('touchstart', (e) => {
 	init_sounds();
 	sound_tap.currentTime = 0;
-	console.log(sound_tap.play(), sound_tap.currentTime);
+	// console.log(sound_tap.play(), sound_tap.currentTime);
 });
 
 /*
