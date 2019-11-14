@@ -432,10 +432,11 @@ num_pad.addEventListener(clickOrTouch, e => {
 })
 
 var sound_tap = null;
+sound_tap.src = './audios/tapping.wav';
 const init_sounds = () => {
 	sound_tap = new Audio();
 	// sound_tap.addEventListener('ended', init_sounds, false);
-	sound_tap.src = '/pwa-calculator/audios/tapping.wav';
+	sound_tap.src = './audios/tapping.wav';
 };
 num_pad.addEventListener('touchstart', (e) => {
 	init_sounds();
