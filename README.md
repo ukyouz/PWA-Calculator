@@ -1,6 +1,10 @@
 # A Fully Functional JS Calculator
 
+The main purpose for this web app is a demostration of the AWP application.
 
+This is a Javascript calculator without using  `eval()` function, while meantime fully functional for all possible integer operation combinations. Notice that this is an **Interger** calculator, floating point number will be truncated, for example 7/2 will be 3 instead of 3.5.
+
+Due to the javascript `Number.MAX_SAFE_INTEGER` limitation, I decided to support the largest number for now is only at Dword size, though the 64-bit number may be implanted for the next feature.
 
 ## References
 
