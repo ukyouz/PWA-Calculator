@@ -500,6 +500,8 @@ document.addEventListener('keydown', e => {
 		case "b":
 		case "c":
 		case "d":
+		case "e":
+		case "f":
 			tag = key;
 			break;
 	}
